@@ -51,27 +51,47 @@ export const API = {
   },
 
   async createLostItem(formData) {
-    const res = await fetch(`${API_BASE}/api/items/lost`, {
-      method: "POST",
-      body: formData
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || "Failed to submit lost item");
+    let res;
+    try {
+      res = await fetch(`${API_BASE}/api/items/lost`, {
+        method: "POST",
+        body: formData
+      });
+    } catch (netErr) {
+      throw new Error("Network connection lost. Please check connection and retry.");
     }
-    return res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      throw new Error(`Server returned status ${res.status}. Please retry on http://localhost:8000.`);
+    }
+    if (!res.ok) {
+      throw new Error(data.detail || "Failed to submit lost item");
+    }
+    return data;
   },
 
   async createFoundItem(formData) {
-    const res = await fetch(`${API_BASE}/api/items/found`, {
-      method: "POST",
-      body: formData
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || "Failed to submit found item");
+    let res;
+    try {
+      res = await fetch(`${API_BASE}/api/items/found`, {
+        method: "POST",
+        body: formData
+      });
+    } catch (netErr) {
+      throw new Error("Network connection lost. Please check connection and retry.");
     }
-    return res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      throw new Error(`Server returned status ${res.status}. Please retry on http://localhost:8000.`);
+    }
+    if (!res.ok) {
+      throw new Error(data.detail || "Failed to submit found item");
+    }
+    return data;
   },
 
   async getMatches(minScore = 0.40) {
